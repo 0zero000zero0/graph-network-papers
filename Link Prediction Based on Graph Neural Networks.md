@@ -1,7 +1,14 @@
 [原文PDF]([1802.09691.pdf (arxiv.org)](https://arxiv.org/pdf/1802.09691.pdf))
 ## 传统link prediction算法
 
-
+```table-of-contents
+title: 
+style: nestedList # TOC style (nestedList|inlineFirstLevel)
+minLevel: 0 # Include headings from the specified level
+maxLevel: 0 # Include headings up to the specified level
+includeLinks: true # Make headings clickable
+debugInConsole: false # Print debug info in Obsidian console
+```
 ### 经典算法
 现有的启发式可以根据计算分数所需的邻居的最大跳数(**k-hop**)进行分类
 例如:

@@ -1,5 +1,14 @@
 前置论文:[[Link Prediction Based on Graph Neural Networks]]
 [原文PDF]([ieeexplore.ieee.org/ielx7/6287639/10005208/10144318.pdf](https://ieeexplore.ieee.org/ielx7/6287639/10005208/10144318.pdf))
+```table-of-contents
+title: 
+style: nestedList # TOC style (nestedList|inlineFirstLevel)
+minLevel: 0 # Include headings from the specified level
+maxLevel: 0 # Include headings up to the specified level
+includeLinks: true # Make headings clickable
+debugInConsole: false # Print debug info in Obsidian console
+```
+
 ### 基于图神经网络的链接预测架构
 #### GNN一般架构:MPNN
 MPNN(massage pass neural network) 是图神经网络的一种架构:
