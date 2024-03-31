@@ -28,6 +28,7 @@ In TransC,concern 2are encoded as a sphere and instances as vectors in the same 
 	- `InstanceOf-subClassOf` transitivity relations can be shown as follow Equations$$(i,r_{e},c_{1})\in S_{e} \wedge (c_{1},r_{c},c_{2})\in S_{c} \rightarrow (i,r_{e},r_{2})\in S_{e}$$
 	- `SubClassOf-subClassOf` transitivity can be represented:$$(c_{1},r_{c},c_{2})\in S_{c} \wedge (c_{2},r_{c},c_{3})\in S_{c}\to (c_{1},r_{c},c_{3})\in S_{c}$$
 ## Method
+
 the author proposed new loss fuctions to measure the relative position  in embedding space,and then jointly the representation of concepts ,instances and relations based-on the translation model.
 ![[Pasted image 20240331111154.png]]
 - **InstanceOf Triples Representations**:for `InstanceOf` triples $(i,r_e,s)$ ,if true ,$\mathbf{i}$ should be inside the sphere  $s$ to represent the `instanceOf`relation between them.So the loss function is defined as $$f_{e}(i,c)=\Vert \mathbf{i}-\mathbf{p}\Vert_{2}-m$$
@@ -37,4 +38,27 @@ the author proposed new loss fuctions to measure the relative position  in embed
 & f_c(c_i,c_j)=||\mathbf{p}_i-\mathbf{p}_j||_2+m_i-m_{j} &\qquad(c)  \\
 &f_c(c_i,c_j)=m_i-m_{j} &(d)
 \end{align}$$
-- 
+- **Relational Triple Representation**:for $(h,r,t)$ ,the loss ,funcitons like TransE ,is defined as $$f_{r}(h,t)=\Vert h+r-t\Vert_{2}^{2}$$
+## Trianing method
+### `instanceof` triples
+the author use
+- $\xi$ and $\xi'$ to denote a positive triple and a negative triple.
+- $\mathcal{S_{e}}$ and $\mathcal{S_{e}'}$ to denote a positive triple set and  a negative triple set
+- $[x]_{+}$ is $max(0,x)$ 
+- $\gamma_{e}$ is the margin separating positive triplets and negative triplets
+$$\mathcal{L}_e=\sum_{\xi\in\mathcal{S}_e}\sum_{\xi^{\prime}\in\mathcal{S}_e^{\prime}}[\gamma_e+f_e(\xi)-f_e(\xi^{\prime})]_+,$$
+
+### `subClassOf` triples
+$$\mathcal{L}_c=\sum_{\xi\in\mathcal{S}_c}\sum_{\xi^{\prime}\in\mathcal{S}_c^{\prime}}[\gamma_c+f_c(\xi)-f_c(\xi^{\prime})]_+,$$
+### Relational triples 
+$$\mathcal{L}_l=\sum_{\xi\in\mathcal{S}_l}\sum_{\xi^{\prime}\in\mathcal{S}_l^{\prime}}[\gamma_l+f_r(\xi)-f_r(\xi^{\prime})]_+.$$
+
+### Total loss
+$$\mathcal{L}=\mathcal{L_{e}}+\mathcal{L_{c}}+\mathcal{L_{l}}$$
+### Train set
+for a true relational triple$(h,r,t)$, replace h or t by h' or t' ,where h' is randomly picking from a set $\mathcal{M_{t}}=\mathcal{M_{1}} \cup \mathcal{M_{2}} \dots \mathcal{M_{n}}$,where $M_{i}=\{a|a\in I \wedge (a,r_{e},c_{i})\in \mathcal{S_{e}} \wedge (t,r_{e},c_{i}) \mathcal{S_{e}} \wedge t \neq a \}$
+the generatiom strategies :
+- uniform sampling
+-  Bernoulli sampling:
+
+## Link Prediction
