@@ -11,7 +11,7 @@ Ths  disadvantages of tradition  method: **ignore to distinguish between  concep
 - lah hahitivity of both isA relations:`instance of` and `sub class of` (generally known as isA) are two special relations in knowledge  graph .
 ### motivation 
 **hierarchical concepts**:concepts  in people's mind iare organized hierarchically.So instances should be close to concepts that they belong to.
-In TransC,concern 2are encoded as a sphere and instances as vectors in the same semantic space and relative position are employed to model the relations between concepts and instances .
+In TransC,concepts are encoded as a sphere and instances as vectors in the same semantic space and relative position are employed to model the relations between concepts and instances .
 
 ### Symbols and Concepts
 - Relations set $\mathcal{R}=\{r_e,r_c\}\cup\mathcal{R}_l$,where $R_{l}$  is the realtions between instances ,and $r_e$ is an `instanceOf` relation ,$r_c$ is an `subClassOf` relation.
@@ -62,3 +62,8 @@ the generatiom strategies :
 -  Bernoulli sampling:
 
 ## Link Prediction
+
+
+## Experiments
+experiments for link prediction and triple classification
+![[Pasted image 20240331203528.png]]
