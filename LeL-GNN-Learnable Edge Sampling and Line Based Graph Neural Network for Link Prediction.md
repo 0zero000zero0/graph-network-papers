@@ -20,7 +20,7 @@ MPNN(massage pass neural network) 是图神经网络的一种架构:
 
 ## 本论文提出的方法
 ### 整体算法
-![[Pasted image 20240319142319.png]]
+![[Lel_GNN_algriothm.png]]
 其中
 - (8)式是封闭子图的提取方法:$$G_{\nu_1,\nu_2}^k=\{\nu|min(d(\nu,\nu_1),d(\nu,\nu_2))\leq k\}$$
 - (9)式是节点标记函数，在前置论文[[Link Prediction Based on Graph Neural Networks]]中提出
