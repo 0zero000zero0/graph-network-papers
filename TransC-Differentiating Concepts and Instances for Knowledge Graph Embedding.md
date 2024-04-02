@@ -8,7 +8,7 @@
 
 Ths  disadvantages of tradition  method: **ignore to distinguish between  concepts and instances**,which lead to drawbacks:
 - **insufficient concept representation**:most of methods encode both concepts and instances as vectors ,which cannot explicitly represent the difference between concepts and instances 
-- lah hahitivity of both isA relations:`instance of` and `sub class of` (generally known as isA) are two special relations in knowledge  graph .
+- transitivity of both isA relations:`instance of` and `sub class of` (generally known as isA) are two special relations in knowledge  graph .
 ### motivation 
 **hierarchical concepts**:concepts  in people's mind iare organized hierarchically.So instances should be close to concepts that they belong to.
 In TransC,concepts are encoded as a sphere and instances as vectors in the same semantic space and relative position are employed to model the relations between concepts and instances .
