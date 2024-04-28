@@ -28,3 +28,43 @@ http://arxiv.org/abs/2112.02936
 
 
 ## Neighborhood Encoder
+邻居编码器主要由两个部分组成:Node neighborhood encoder(NNE)和Node-pair Neighborhood encoder(或者是Edge level Neighborhood Encoder (ENE)) 
+### NNE
+对于一对输入的节点$v_{i},v_{j}$(在架构图中是A,B)，在采样后生成负样本，使用GNN(例如GCN，GraphSAGE，GAT)对正负样本，进行学习编码，提取正样本和负样本周围的结构信息和周围节点的信息，
+![[PLNLP_NNE.png]]
+其中，$x_i$一般是节点$v_i$的输入特征(例如对节点的属性进行编码)，$\mathcal{N}^h(v_{i})$是在节点$v_i$周围提取的子图，节点$v_{j}$同理。由于该框架只考虑同质图(hemogenous graph，所有节点的类型都是一致的)，因此，所有节点共享用一个GNN网络参数。经过GNN后，会得到一些节点的嵌入
+### ENE
+ENE是对子图进行编码，使用(SEAL，NIAN等用于解决链接预测问题的其他框架/架构)，例如:SEAL[[Link Prediction Based on Graph Neural Networks]]:
+1. 从目标节点对提取到达目标节点对的距离小于$k$的节点组成封闭子图
+2. 使用DRNL(doubel-radius node label)对封闭子图中的节点进行位置编码，获取结构信息
+3. 负样本注入
+4. 使用node2vec生成嵌入
+5. 把节点本身的元数据(例如用户的年龄、性别、兴趣点等)加入到特征矩阵中
+6. 使用GNN训练
+通过SEAL框架训练后得到一对节点的嵌入，这些节点嵌入包含了目标节点对，负样本对的元数据特征，结构特征，以及周围邻居的。由于ENE是对 节点对进行编码，因此可以视作为这两个节点之间的边的特征$$h_{ij}=ENE(x_{i},x_{j},\{\mathbf{x_{i}}|v_{k\in \mathcal{G^h}(v_{i},v_{j})}\})$$其中$\mathcal{G^h}$是
+## Link Score Predictor
+链接分数预测器的主要作用是把上述Neighborhood encoder的结果进行融合，充分考虑节点(通过NNE编码)和边(通过ENE编码)的特征。融合的方式有:
+1.  Dot:直接把两个向量进行点乘$$s_{ij}=\mathrm{h}_i\cdot\mathrm{h}_j  $$
+2. Bilinear Dot:双线性点乘，由于点乘操作只适用于无向图(因为点乘时对称的，$a\cdot b=b \cdot a$)，在面对有向图时，使用双线性点乘来大批对称性质$$s_{ij}=h_{i}Wh_{j}$$其中$W$是可学习的参数
+3. MLP:使用多层感知机把两个编码后的特征进行降维$$s_{ij}=MLP(h_{ij})$$，在进入MLP之前，还可以先对两个特征进行一些预处理，例如哈达玛积或者是把两个向量连接起来$$ s_{ij}=MLP(h_{i}\odot h_{j}) $$$$s_{ij}=\mathrm{MLP}(\mathbf{h}_i||\mathbf{h}_j)$$
+Link Score Predictor也就是评分模型，输出的结果是分数
+## 目标函数
+使用交叉熵损失函数优化模型是间接求解链接预测问题，此外，由于图中链接与非链接存在极大不平衡，因此作者采用了排序的思想来优化目标，具体是$$s_{ij}>s_{kl},\forall(v_{i},v_{j})\in E\mathrm{~and~}\forall(v_{k},v_{l})\in E^{-}$$其中$s$是Link Score Predictor输出的分数，$E^-$是生成的负样本(集)，实际上，上述的目标函数优化的是正样本的分数大于样本的分数，这与AUC(Area Under the Curve)是一致的，$$\mathrm{AUC}=\sum_{\begin{array}{c}(v_i,v_j)\in E\\\end{array}}\sum_{\begin{array}{c}(v_k,v_l)\in E^-\\\end{array}}\frac{\mathbb{1}[f_{\boldsymbol{\theta}}(v_i,v_j)>f_{\boldsymbol{\theta}}(v_k,v_l)]}{|V\times V|}$$ 
+其中$f_{\theta}(v_{i},v_{j})=s_{ij}$  $\mathbb{1}$是指示函数，如果$f_{\theta}(v_{i},v_{j})>f_{\theta}(v_{k},v_{l})$则为1，否则为0。$\mathbf{V}$是样本大小。由于该目标函数的偏导数要么为0，要不不存在，因此无法直接使用该函数进行反向传播优化模型，但是可以使用其他损失函数优化模型，例如逻辑损失，指数损失。还有一个选择是近似AUC，$$O_{\mathrm{AUC}}=\min_{\theta}\sum_{(v_i,v_i)\in E,(v_i,v_k)\in E^-}\left(1-f_{\theta}\left(v_i,v_j\right)+f_{\theta}\left(v_i,v_k\right)\right)^2+\frac\lambda2||\theta||^2$$
+$\frac{\lambda}{2}\Vert \theta\Vert^2$是正则项；在优化这个损失函数时，就是在强制要求正负样本评分距离为1。实际情况下如果正负样本的距离大于1也是可行的，因此可以改良为$$O_{\mathrm{AUC}}=\min_{\theta}\sum_{(v_i,v_i)\in E,(v_i,v_k)\in E^-}\gamma_{ij}\max(0,\left(\gamma_{ij}-f_{\theta}\left(v_i,v_j\right)+f_{\theta}\left(v_i,v_k\right)\right)^2)+\frac\lambda2||\theta||^2$$这样优化的含义就是让正负样的分数距离大于等于1，其中$\gamma_{ij}$为margin coefficient，可以调整正负样本分数的最小距离
+
+## 通过随机游走增强数据
+在一些图中:
+1. 高阶邻居的信息可能会很重要，需要对一些高阶邻居进行采样
+2. 缓解GNN过渡从局部邻居中聚合信息导致过平滑问题
+3. 一些高度节点的邻居太多导致计算效率低下
+
+因此随机游走生成一些节点序列，从这个序列中节点聚合信息$$RW(v_{i})={v_{k+1,\cdots,v_{k+l} }}$$增强后的数据为$$E_{\mathbf{aug}}=E\cup\{(v_i,v_j)|v_j\in\mathrm{RW}(v_i),\forall v_i\in V\}$$
+然后就可以使用这些数据训练模型
+
+
+## 实验结果
+实验配置
+![[PLNLP实验配置.png|734]]
+链接预测实验结果:
+![[PLNLP链接预测实验结果.png|734]]
