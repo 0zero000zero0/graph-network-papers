@@ -15,9 +15,10 @@ debugInConsole: false # Print debug info in Obsidian console
 #### one-hop
 - Common Neighbors 算法基于这样一个假设，即两个节点共有的邻居数量越多，它们之间存在链接的可能性就越大:$$\mathrm{CN}(u,v)=|\Gamma(u)\cap\Gamma(v)|$$其中，$\Gamma(v)$表示节点v的邻居
 - Preferential Attachment算法基于“富者更富”或“优先连接”的概念，即流行的节点(即邻居数量多的节点)更有可能在未来获得更多的链接。这个想法来源于无标度网络的成长模型，其中一些节点因为具有较高的连接度而更容易吸引新的连接:$$\mathrm{PA}(u,v)=|\Gamma(u)|\times|\Gamma(v)|$$
+
 #### two-hop
 
-- Adamic-Adar:Adamic-Adar算法基于这样一个假设，即不是所有的共享邻居都同等重要。具体来说，如果一个共享邻居与很多其他节点相连(即度较高)，那么它对于链接预测的贡献应该比度较低的邻居小。因此，AA算法倾向于给那些连接度较低的共享邻居更高的权重。$$\mathrm{AA}(u,v)=\sum_{z\in\Gamma(u)\cap\Gamma(v)}\frac1{s{\log|\Gamma(z)|}}$$
+- Adamic-Adar:Adamic-Adar算法基于这样一个假设，即不是所有的共享邻居都同等重要。具体来说，如果一个共享邻居与很多其他节点相连(即度较高)，那么它对于链接预测的贡献应该比度较低的邻居小。因此，AA算法倾向于给那些连接度较低的共享邻居更高的权重。$$\mathrm{AA}(u,v)=\sum_{z\in\Gamma(u)\cap\Gamma(v)}\frac1{{\log|\Gamma(z)|}}$$
 - Resource Allocation:Resource Allocation算法受到物理学中的资源分配过程的启发。在这个模型中，每个节点都被视为有一定资源的实体，这些资源可以通过它们的共享邻居进行分配。如果两个节点通过共享邻居接收到更多的资源，那么它们之间存在链接的可能性就更大。RA算法假设资源的分配是均等的，不同于AA算法中对低度节点的偏好。$$\mathrm{RA}(u,v)=\sum_{z\in\Gamma(u)\cap\Gamma(v)}\frac1{|\Gamma(z)|}$$
 #### k-hop 
 
