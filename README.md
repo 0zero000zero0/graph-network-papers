@@ -10,3 +10,4 @@
 	GCN:Semi-Supervised Classification with Graph Convolutional Networks
 	GAT:Graph Attention Networks
 	HAT:Heterogeneous Graph Attention Network
+
